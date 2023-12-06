@@ -1,20 +1,23 @@
 <template>
   <div id="app">
     <ImageUploadComponent />
+    <CarouselComponent v-if="false"></CarouselComponent>
   </div>
 </template>
 
 <script>
 // import PageForm from './components/PageForm.vue';
 import ImageUploadComponent from './components/ImageUploadComponent.vue';
+import CarouselComponent from './components/CarousselComponent.vue';
 
 export default {
   name: 'App',
   components: {
     //PageForm,
-    ImageUploadComponent
-  }
-}
+    ImageUploadComponent,
+    CarouselComponent,
+  },
+};
 </script>
 
 <style>
