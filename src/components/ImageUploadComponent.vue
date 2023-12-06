@@ -27,91 +27,23 @@
       <b-col cols="12" md="8" class="rendring">
         <b-card title="Image Rendering Area">
           <!-- Placeholder for Rendring 1 images -->
-          <b-form-group
+          <RenderingComponent
+            :loading="loading"
+            :show-images="generate1"
             label="Newest rendering: Automatic description of the room & style"
-            class="mt-3"
-          >
-            <div v-if="loading">
-              <div class="text-center">
-                <b-spinner />
-                <p>Loading images...</p>
-              </div>
-            </div>
-            <b-row v-else>
-              <!-- Placeholder for generated images -->
-              <b-col
-                md="6"
-                lg="3"
-                v-for="(image, index) in generatedImages"
-                :key="index"
-              >
-                <b-img
-                  :src="image.url"
-                  alt="Generated Image"
-                  fluid
-                  class="generated mb-3"
-                ></b-img>
-              </b-col>
-            </b-row>
-          </b-form-group>
+          />
 
-          <!-- Placeholder for Rendring 1 images -->
-          <b-form-group
-            label="Rendring 1: Automatic description of the room & style"
-            class="mt-3"
-          >
-            <div v-if="loading">
-              <div class="text-center">
-                <b-spinner />
-                <p>Loading images...</p>
-              </div>
-            </div>
-            <b-row v-else>
-              <!-- Placeholder for generated images -->
-              <b-col
-                md="6"
-                lg="3"
-                v-for="(image, index) in generatedImages1"
-                :key="index"
-              >
-                <b-img
-                  :src="image.url"
-                  alt="Generated Image"
-                  fluid
-                  class="generated mb-3"
-                ></b-img>
-              </b-col>
-            </b-row>
-          </b-form-group>
+          <RenderingComponent
+            :loading="loading"
+            :show-images="generate2"
+            label="Rendering 1: Automatic description of the room & style"
+          />
 
-          <!-- Placeholder for Rendring 2 images -->
-          <b-form-group
-            label="Rendring 2: Automatic description of the room & style"
-            class="mt-3"
-          >
-            <div v-if="loading">
-              <div class="text-center">
-                <b-spinner />
-                <p>Loading images...</p>
-              </div>
-            </div>
-            <b-row v-else>
-              <!-- Placeholder for generated images -->
-              <b-col
-                md="6"
-                lg="3"
-                v-for="(image, index) in generatedImages2"
-                :key="index"
-              >
-                <b-img
-                  :src="image.url"
-                  alt="Generated Image"
-                  fluid
-                  class="generated mb-3"
-                ></b-img>
-              </b-col>
-            </b-row>
-          </b-form-group>
+          <RenderingComponent
+            :loading="loading"
+            :show-images="generate3"
+            label="Rendering 2: Automatic description of the room & style"
+          />
         </b-card>
       </b-col>
     </b-row>
@@ -119,16 +51,20 @@
 </template>
 
 <script>
+import RenderingComponent from './RenderingComponent.vue';
 export default {
   name: 'ImageUploadComponent',
+  components: {
+    RenderingComponent,
+  },
   data() {
     return {
-      file: null, // Holds the file object
-      imageUrl: null, // Will hold the URL for the uploaded image
-      generatedImages: [], // Placeholder for generated images
-      generatedImages1: [], // Placeholder for generated images
-      generatedImages2: [], // Placeholder for generated images
-      loading: false, // Indicates whether the images are being loaded
+      file: null,
+      imageUrl: null,
+      loading: false,
+      generate1: false,
+      generate2: false,
+      generate3: false,
     };
   },
   methods: {
@@ -136,52 +72,27 @@ export default {
       const file = e?.target?.files?.[0];
       this.createImage(file);
     },
-    createImage(file) {
+    async createImage(file) {
       const reader = new FileReader();
       this.loading = true;
 
-      reader.onload = (e) => {
+      reader.onload = async (e) => {
         this.imageUrl = e.target.result;
-        setTimeout(() => {
-          this.generateImages();
-          this.loading = false;
-        }, 3000);
+        await new Promise((resolve) => setTimeout(resolve, 3000)); // Attendre 3 secondes
+        this.loading = false;
+        this.generate1 = true;
+        await new Promise((resolve) => setTimeout(resolve, 2000)); // Attendre 2 secondes
+        this.generate2 = true;
+        await new Promise((resolve) => setTimeout(resolve, 2000)); // Attendre 2 secondes
+        this.generate3 = true;
       };
 
       reader.readAsDataURL(file);
     },
-    generateImages() {
-      // Placeholder method - implement image generation logic here
-      // Update generatedImages array with URLs of generated images
-      console.log('render generated images');
-      this.generatedImages = this.get4RandomImages();
-      this.generatedImages1 = this.get4RandomImages();
-      this.generatedImages2 = this.get4RandomImages();
-    },
-    get4RandomImages() {
-      return [
-        {
-          url: this.getRandomImage(),
-        },
-        {
-          url: this.getRandomImage(),
-        },
-        {
-          url: this.getRandomImage(),
-        },
-        {
-          url: this.getRandomImage(),
-        },
-      ];
-    },
-    getRandomImage() {
-      const getRandomInt = (max) => Math.floor(Math.random() * max) + 1;
-      return 'https://picsum.photos/512/512/?image=' + getRandomInt(50);
-    },
     clearAll() {
-      this.generatedImages = [];
-      this.generatedImages1 = [];
-      this.generatedImages2 = [];
+      this.generate1 = false;
+      this.generate2 = false;
+      this.generate3 = false;
       this.file = null;
       this.imageUrl = null;
     },

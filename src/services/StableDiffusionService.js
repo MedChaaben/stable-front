@@ -1,5 +1,5 @@
 export default class StableDiffusionService {
-  baseUrl: String;
+  baseUrl;
 
   constructor(baseUrl) {
     this.baseUrl = baseUrl; // L'URL de base de votre modèle / serveur

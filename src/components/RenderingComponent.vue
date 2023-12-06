@@ -10,7 +10,7 @@
         <p>Loading images...</p>
       </div>
     </div>
-    <b-row v-else>
+    <b-row v-else-if="showImages">
       <!-- Placeholder for generated images -->
       <b-col
         md="6"
@@ -42,6 +42,9 @@ export default {
     loading: {
       type: Boolean,
     },
+    showImages: {
+      type: Boolean,
+    },
   },
   data() {
     return {
@@ -49,28 +52,20 @@ export default {
         'https://picsum.photos/512/512/?image='
       ),
       generatedImages: [], // Placeholder for generated images
-      loading: false, // Indicates whether the images are being loaded
     };
   },
-  mounted() {
-    this.get4RandomImages();
+  async mounted() {
+    await this.get4RandomImages();
   },
   methods: {
-    get4RandomImages() {
-      return [
-        {
-          url: this.imageGeneratorService.generateImage(),
-        },
-        {
-          url: this.imageGeneratorService.generateImage(),
-        },
-        {
-          url: this.imageGeneratorService.generateImage(),
-        },
-        {
-          url: this.imageGeneratorService.generateImage(),
-        },
-      ];
+    async get4RandomImages() {
+      const promises = Array.from({ length: 4 }, () =>
+        this.imageGeneratorService.generateImage()
+      );
+      this.generatedImages = (await Promise.all(promises)).map((str) => ({
+        url: str,
+      }));
+      console.log(this.generatedImages);
     },
   },
 };
