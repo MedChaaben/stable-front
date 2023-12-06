@@ -1,17 +1,18 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <ImageUploadComponent />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+// import PageForm from './components/PageForm.vue';
+import ImageUploadComponent from './components/ImageUploadComponent.vue';
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    //PageForm,
+    ImageUploadComponent
   }
 }
 </script>
