@@ -25,21 +25,24 @@
 
       <!-- Image Rendering Area -->
       <b-col cols="12" md="8" class="rendring">
-        <b-card title="Image Rendering Area">
+        <b-card v-if="loading || generate1" title="Image Rendering Area">
           <!-- Placeholder for Rendring 1 images -->
           <RenderingComponent
+            v-if="loading || generate1"
             :loading="loading"
             :show-images="generate1"
             label="Newest rendering: Automatic description of the room & style"
           />
 
           <RenderingComponent
+            v-if="generate2"
             :loading="loading"
             :show-images="generate2"
             label="Rendering 1: Automatic description of the room & style"
           />
 
           <RenderingComponent
+            v-if="generate3"
             :loading="loading"
             :show-images="generate3"
             label="Rendering 2: Automatic description of the room & style"

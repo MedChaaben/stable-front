@@ -1,9 +1,6 @@
 <template>
   <!-- Placeholder for Rendring 1 images -->
-  <b-form-group
-    label="Newest rendering: Automatic description of the room & style"
-    class="mt-3"
-  >
+  <b-form-group :label="label" class="mt-3">
     <div v-if="loading">
       <div class="text-center">
         <b-spinner />
