@@ -10,7 +10,15 @@
             button-text="Charger une image"
             class="mb-3"
           />
-          <b-button @click="clearAll()">clear images</b-button>
+          <b-button
+            v-if="imageUrl"
+            class="m-1"
+            @click="generate()"
+            :disabled="disableBtnGenerate"
+          >
+            Generate
+          </b-button>
+          <b-button class="m-1" @click="clearAll()">clear images</b-button>
           <!-- Image preview -->
           <div v-if="imageUrl" class="mt-3">
             <b-img :src="imageUrl" alt="Image preview" fluid />
@@ -25,27 +33,18 @@
 
       <!-- Image Rendering Area -->
       <b-col cols="12" md="8" class="rendring">
-        <b-card v-if="loading || generate1" title="Image Rendering Area">
-          <!-- Placeholder for Rendring 1 images -->
+        <b-card
+          v-if="loaders.length || generated.length"
+          title="Image Rendering Area"
+        >
           <RenderingComponent
-            v-if="loading || generate1"
-            :loading="loading"
-            :show-images="generate1"
-            label="Newest rendering: Automatic description of the room & style"
-          />
-
-          <RenderingComponent
-            v-if="generate2"
-            :loading="loading"
-            :show-images="generate2"
-            label="Rendering 1: Automatic description of the room & style"
-          />
-
-          <RenderingComponent
-            v-if="generate3"
-            :loading="loading"
-            :show-images="generate3"
-            label="Rendering 2: Automatic description of the room & style"
+            v-for="(loader, index) of loaders"
+            :key="index"
+            :loading="loader"
+            :show-images="generated[index]"
+            :label="`Rendering ${
+              index + 1
+            }: Automatic description of the room & style`"
           />
         </b-card>
       </b-col>
@@ -64,11 +63,14 @@ export default {
     return {
       file: null,
       imageUrl: null,
-      loading: false,
-      generate1: false,
-      generate2: false,
-      generate3: false,
+      generated: [],
+      loaders: [],
     };
+  },
+  computed: {
+    disableBtnGenerate() {
+      return this.loaders.includes(true);
+    },
   },
   methods: {
     onFileChanged(e) {
@@ -81,23 +83,22 @@ export default {
 
       reader.onload = async (e) => {
         this.imageUrl = e.target.result;
-        await new Promise((resolve) => setTimeout(resolve, 3000)); // Attendre 3 secondes
-        this.loading = false;
-        this.generate1 = true;
-        await new Promise((resolve) => setTimeout(resolve, 2000)); // Attendre 2 secondes
-        this.generate2 = true;
-        await new Promise((resolve) => setTimeout(resolve, 2000)); // Attendre 2 secondes
-        this.generate3 = true;
+        await this.generate();
       };
 
       reader.readAsDataURL(file);
     },
     clearAll() {
-      this.generate1 = false;
-      this.generate2 = false;
-      this.generate3 = false;
+      this.generated = [];
+      this.loaders = [];
       this.file = null;
       this.imageUrl = null;
+    },
+    async generate() {
+      this.loaders.push(true);
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      this.loaders = this.loaders.map(() => false);
+      this.generated.push(true);
     },
   },
 };
