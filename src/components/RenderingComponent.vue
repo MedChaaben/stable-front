@@ -62,6 +62,7 @@ export default {
       this.generatedImages = (await Promise.all(promises)).map((str) => ({
         url: str,
       }));
+      this.$emit('generated:finish', this.generatedImages);
       console.log(this.generatedImages);
     },
   },
