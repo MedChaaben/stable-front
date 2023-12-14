@@ -1,48 +1,44 @@
 <template>
   <div>
-    <b-button v-b-toggle.sidebar size="sm" class="sidebar-toggle"
-      >Sidebar</b-button
-    >
+    <b-button v-b-toggle.sidebar class="sidebar-toggle">Sidebar</b-button>
     <b-sidebar
       id="sidebar"
       title="Configuration"
       shadow
       v-model="isSidebarOpen"
     >
-      <div class="box border border-light">
-        <b-form-file
-          v-model="file"
-          @change="onFileChanged"
-          button-text="Charger une image"
-          class="mb-3"
-        />
-        <b-button class="m-1" size="sm" @click="clearAll()"
-          >clear images</b-button
-        >
-        <!-- Image preview -->
-        <div v-if="imageUrl" class="mt-3">
-          <b-img :src="imageUrl" alt="Image preview" class="img-loaded" fluid />
-        </div>
-      </div>
-      <hr />
-      <!-- Select Action Area -->
-      <div v-if="file" class="box border border-light my-3">
-        <!-- Your action area content here -->
-        <SelectActionComponent
-          v-model="actionsValid"
-          @selectActionComponent::choices="setDescription($event)"
-        />
+      <template #footer v-if="imageUrl">
+        <div class="d-flex bg-light text-dark align-items-center px-3 py-2">
+          <b-button class="m-1" @click="reset()"> Annuler tout </b-button>
 
-        <b-button
-          v-if="imageUrl"
-          block
-          class="mt-2"
-          @click="generate()"
-          :disabled="disableBtnGenerate"
-        >
-          Generate
-        </b-button>
+          <b-button
+            class="m-1"
+            @click="generate()"
+            :disabled="disableBtnGenerate"
+          >
+            Generate
+          </b-button>
+        </div>
+      </template>
+
+      <b-form-file
+        v-model="file"
+        @change="onFileChanged"
+        button-text="Charger une image"
+        class="mb-3 p-2"
+      />
+      <!-- Image preview -->
+      <div v-if="imageUrl" class="mt-3">
+        <b-img :src="imageUrl" alt="Image preview" class="img-loaded" fluid />
       </div>
+
+      <!-- Select Action Area -->
+      <SelectActionComponent
+        v-if="file"
+        class="my-3 p-4 border-top"
+        v-model="actionsValid"
+        @selectActionComponent::choices="setDescription($event)"
+      />
     </b-sidebar>
 
     <div :class="{ 'content-collapsed': isSidebarOpen }" class="main-content">
@@ -156,14 +152,18 @@ export default {
 
       reader.readAsDataURL(file);
     },
-    clearAll() {
+    reset() {
       this.generated = [];
       this.loaders = [];
+      this.descriptions = [];
       this.file = null;
       this.imageUrl = null;
+      this.description = null;
+      this.actionsValid = false;
     },
     async generate() {
       this.loaders.push(true);
+      this.scrollToTop();
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
       this.loaders = this.loaders.map(() => false);
@@ -190,6 +190,13 @@ export default {
       // else return empty label
       return '';
     },
+    scrollToTop() {
+      window.scrollTo({
+        top: 0, // Haut de la page
+        left: 0, // Gauche de la page
+        behavior: 'smooth', // Défilement fluide
+      });
+    },
   },
 };
 </script>
@@ -214,11 +221,6 @@ export default {
 
 .content-collapsed {
   margin-left: var(--sidebar-width); /* Utiliser la variable ici */
-}
-
-.box {
-  border-radius: 8px;
-  padding: 1em;
 }
 
 .img-loaded {
