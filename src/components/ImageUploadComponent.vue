@@ -1,62 +1,67 @@
 <template>
-  <b-container fluid>
-    <!-- Upload Image Area -->
-    <b-row>
-      <b-col cols="3" md="3" sm="5">
-        <div class="box border border-light">
-          <h3>Upload image area</h3>
-          <b-form-file
-            v-model="file"
-            @change="onFileChanged"
-            button-text="Charger une image"
-            class="mb-3"
-          />
-          <b-button class="m-1" @click="clearAll()">clear images</b-button>
-          <!-- Image preview -->
-          <div v-if="imageUrl" class="mt-3">
-            <b-img :src="imageUrl" alt="Image preview" fluid />
-          </div>
-        </div>
-
-        <!-- Select Action Area -->
-        <div v-if="file" class="box border border-light my-3">
-          <h3>Select Action Area</h3>
-          <!-- Your action area content here -->
-          <SelectActionComponent v-model="actionsValid"></SelectActionComponent>
-          <div>
-            <b-button
-              v-if="imageUrl"
-              class="mt-2"
-              @click="generate()"
-              :disabled="disableBtnGenerate"
-            >
-              Generate
-            </b-button>
-          </div>
-        </div>
-      </b-col>
-
-      <!-- Image Rendering Area -->
-      <b-col cols="9" md="9" sm="7" class="rendring">
-        <div
-          v-if="loaders.length || generated.length"
-          class="box border border-light d-flex flex-column"
+  <div>
+    <b-button v-b-toggle.sidebar size="sm" class="sidebar-toggle"
+      >Sidebar</b-button
+    >
+    <b-sidebar
+      id="sidebar"
+      title="Configuration"
+      shadow
+      v-model="isSidebarOpen"
+    >
+      <div class="box border border-light">
+        <b-form-file
+          v-model="file"
+          @change="onFileChanged"
+          button-text="Charger une image"
+          class="mb-3"
+        />
+        <b-button class="m-1" size="sm" @click="clearAll()"
+          >clear images</b-button
         >
-          <h3>Image Rendering Area</h3>
-          <RenderingComponent
-            v-for="(loader, index) of loaders"
-            :class="`order-${generated.length - index}`"
-            :key="index"
-            :loading="loader"
-            :show-images="generated[index]"
-            :label="`Rendering ${
-              index + 1
-            }: Automatic description of the room & style`"
-          />
+        <!-- Image preview -->
+        <div v-if="imageUrl" class="mt-3">
+          <b-img :src="imageUrl" alt="Image preview" class="img-loaded" fluid />
         </div>
-      </b-col>
-    </b-row>
-  </b-container>
+      </div>
+      <hr />
+      <!-- Select Action Area -->
+      <div v-if="file" class="box border border-light my-3">
+        <!-- Your action area content here -->
+        <SelectActionComponent v-model="actionsValid"></SelectActionComponent>
+
+        <b-button
+          v-if="imageUrl"
+          block
+          class="mt-2"
+          @click="generate()"
+          :disabled="disableBtnGenerate"
+        >
+          Generate
+        </b-button>
+      </div>
+    </b-sidebar>
+
+    <div :class="{ 'content-collapsed': isSidebarOpen }" class="main-content">
+      <div
+        v-if="loaders.length || generated.length"
+        class="box d-flex flex-column"
+      >
+        <h3>Image Rendering Area</h3>
+        <RenderingComponent
+          v-for="(loader, index) of loaders"
+          :class="`order-${generated.length - index}`"
+          :key="index"
+          :loading="loader"
+          :show-images="generated[index]"
+          :label="`Rendering ${
+            index + 1
+          }: Automatic description of the room & style`"
+        />
+      </div>
+    </div>
+    <!-- Upload Image Area -->
+  </div>
 </template>
 
 <script>
@@ -75,6 +80,7 @@ export default {
       generated: [],
       loaders: [],
       actionsValid: false,
+      isSidebarOpen: true,
     };
   },
   computed: {
@@ -113,17 +119,34 @@ export default {
 };
 </script>
 
-<style scoped>
-/* Add styles for your image preview if necessary */
-img.generated {
-  border: solid 1px;
-  border-radius: 8px;
-  height: 240px;
-  display: block;
+<style>
+:root {
+  --sidebar-width: 350px; /* Définir la variable ici */
+}
+
+#sidebar {
+  width: var(--sidebar-width);
+}
+
+.sidebar-toggle {
+  position: fixed;
+  left: 0;
+}
+
+.main-content {
+  transition: margin-left 0.3s ease;
+}
+
+.content-collapsed {
+  margin-left: var(--sidebar-width); /* Utiliser la variable ici */
 }
 
 .box {
   border-radius: 8px;
   padding: 1em;
+}
+
+.img-loaded {
+  height: 180px !important;
 }
 </style>

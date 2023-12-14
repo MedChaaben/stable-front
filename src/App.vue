@@ -1,19 +1,17 @@
 <template>
-  <div id="app">
+  <div id="app" class="bg-dark text-white min-vh-100">
     <ImageUploadComponent />
     <CarouselComponent v-if="false"></CarouselComponent>
   </div>
 </template>
 
 <script>
-// import PageForm from './components/PageForm.vue';
 import ImageUploadComponent from './components/ImageUploadComponent.vue';
 import CarouselComponent from './components/CarousselComponent.vue';
 
 export default {
   name: 'App',
   components: {
-    //PageForm,
     ImageUploadComponent,
     CarouselComponent,
   },
@@ -28,6 +26,5 @@ export default {
   text-align: center;
   color: #2c3e50;
   padding: 8px;
-  /* margin-top: 60px; */
 }
 </style>
