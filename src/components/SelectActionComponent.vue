@@ -130,7 +130,9 @@ export default {
           this.roomChoice,
           this.styleChoice,
           ...POSITIVE,
-        ].join(', ');
+        ]
+          .filter((el) => el) // remove null values
+          .join(', ');
         console.log('positivePrompt', this.positivePrompt);
         console.log('negativePrompt', this.negativePrompt);
       }
