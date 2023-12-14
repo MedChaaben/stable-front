@@ -51,13 +51,13 @@ export default {
         { value: 'declutter', text: 'Désencombrer' },
       ],
       rooms: [
-        { value: null, text: 'Choisir une action' },
+        { value: null, text: 'Choisir une pièce' },
         { value: 'living room', text: 'Salon' },
         { value: 'bedroom', text: 'Chambre' },
         { value: 'kitchen', text: 'Cuisine' },
       ],
       styles: [
-        { value: null, text: 'Choisir une action' },
+        { value: null, text: 'Choisir un style' },
         { value: 'modern', text: 'Moderne' },
         { value: 'minimalist', text: 'Minimaliste ' },
         { value: 'futurism', text: 'Futuriste' },

@@ -9,7 +9,7 @@
     >
       <template #footer v-if="imageUrl">
         <div class="d-flex bg-light text-dark align-items-center px-3 py-2">
-          <b-button class="m-1" @click="reset()"> Annuler tout </b-button>
+          <b-button class="m-1" @click="reset()">Annuler tout</b-button>
 
           <b-button
             class="m-1"
@@ -21,12 +21,16 @@
         </div>
       </template>
 
-      <b-form-file
-        v-model="file"
-        @change="onFileChanged"
-        button-text="Charger une image"
-        class="mb-3 p-2"
-      />
+      <div class="m-2">
+        <b-form-file
+          v-model="file"
+          :state="Boolean(file)"
+          @change="onFileChanged"
+          button-text="Charger une image"
+          placeholder="déposez une image"
+          class="p-2"
+        />
+      </div>
       <!-- Image preview -->
       <div v-if="imageUrl" class="mt-3">
         <b-img :src="imageUrl" alt="Image preview" class="img-loaded" fluid />
@@ -35,7 +39,7 @@
       <!-- Select Action Area -->
       <SelectActionComponent
         v-if="file"
-        class="my-3 p-4 border-top"
+        class="my-3 p-4"
         v-model="actionsValid"
         @selectActionComponent::choices="setDescription($event)"
       />
@@ -49,11 +53,13 @@
         <h3>Image Rendering Area</h3>
         <RenderingComponent
           v-for="(loader, index) of loaders"
-          :class="`order-${generated.length - index}`"
+          :class="`order-${generated.length - index} border-bottom`"
           :key="index"
           :loading="loader"
           :show-images="generated[index]"
           :label="getLabelRenderingComponent(index)"
+          :prompt="prompts[index]"
+          :index="index"
         />
       </div>
     </div>
@@ -128,6 +134,7 @@ export default {
       loaders: [],
       descriptions: [],
       description: null,
+      prompts: [],
       actionsValid: false,
       isSidebarOpen: true,
     };
@@ -160,6 +167,7 @@ export default {
       this.imageUrl = null;
       this.description = null;
       this.actionsValid = false;
+      this.prompts = [];
     },
     async generate() {
       this.loaders.push(true);
@@ -171,11 +179,12 @@ export default {
       this.generated.push(true);
       this.descriptions.push(this.description);
 
-      const negativePrompt = NEGATIVE.join(', ');
-      const positivePrompt = [this.description, ...POSITIVE].join(', ');
+      this.prompts.push({
+        negative: NEGATIVE,
+        positive: [...this.description.split(', '), ...POSITIVE],
+      });
 
-      console.log('positivePrompt', positivePrompt);
-      console.log('negativePrompt', negativePrompt);
+      console.log(this.prompts);
     },
     setDescription(value) {
       this.description = `${value?.actionChoice}, ${value?.roomChoice}`;

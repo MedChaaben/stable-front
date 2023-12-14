@@ -7,22 +7,82 @@
         <p>Loading images...</p>
       </div>
     </div>
-    <b-row v-else-if="showImages">
-      <!-- Placeholder for generated images -->
-      <b-col
-        md="6"
-        lg="3"
-        v-for="(image, index) in generatedImages"
-        :key="index"
+    <template v-else-if="showImages">
+      <b-button
+        variant="primary"
+        size="sm"
+        class="mb-2"
+        @click="showPrompt = !showPrompt"
       >
-        <b-img
-          :src="image.url"
-          alt="Generated Image"
-          fluid
-          class="generated mb-3"
-        ></b-img>
-      </b-col>
-    </b-row>
+        Show/hide prompt
+      </b-button>
+
+      <b-button-group v-if="showPrompt" class="float-right">
+        <b-button @click="showRawPrompt = !showRawPrompt" size="sm"
+          >RAW</b-button
+        >
+        <b-button @click="copyText(prompt.positive.join(', '))" size="sm"
+          >Copy positive</b-button
+        >
+        <b-button @click="copyText(prompt.negative.join(', '))" size="sm"
+          >Copy négative</b-button
+        >
+      </b-button-group>
+
+      <b-card
+        class="mt-2"
+        v-show="showPrompt"
+        bg-variant="dark"
+        text-variant="white"
+      >
+        <div class="prompt-display">
+          <h5>Positive Prompts</h5>
+
+          <div v-if="showRawPrompt">
+            {{ prompt?.positive.join(', ') }}
+          </div>
+          <ul v-else>
+            <li
+              v-for="(item, index) in prompt?.positive"
+              :key="index"
+              class="prompt-item"
+            >
+              <b-badge pill variant="success">{{ item }}</b-badge>
+            </li>
+          </ul>
+
+          <h5>Negative Prompts</h5>
+          <div v-if="showRawPrompt">
+            {{ prompt?.negative.join(', ') }}
+          </div>
+          <ul v-else>
+            <li
+              v-for="(item, index) in prompt?.negative"
+              :key="index + 'n'"
+              class="prompt-item"
+            >
+              <b-badge pill variant="danger">{{ item }}</b-badge>
+            </li>
+          </ul>
+        </div>
+      </b-card>
+      <b-row>
+        <!-- Placeholder for generated images -->
+        <b-col
+          md="6"
+          lg="3"
+          v-for="(image, index) in generatedImages"
+          :key="index"
+        >
+          <b-img
+            :src="image.url"
+            alt="Generated Image"
+            fluid
+            class="generated mb-3"
+          ></b-img>
+        </b-col>
+      </b-row>
+    </template>
   </b-form-group>
 </template>
 
@@ -34,7 +94,6 @@ export default {
   props: {
     label: {
       type: String,
-      required: true,
     },
     loading: {
       type: Boolean,
@@ -42,13 +101,18 @@ export default {
     showImages: {
       type: Boolean,
     },
+    prompt: {
+      type: Object,
+    },
   },
   data() {
     return {
       imageGeneratorService: new ImageGeneratorService(
         'https://picsum.photos/512/512/?image='
       ),
-      generatedImages: [], // Placeholder for generated images
+      generatedImages: [],
+      showPrompt: false,
+      showRawPrompt: false,
     };
   },
   async mounted() {
@@ -65,6 +129,22 @@ export default {
       this.$emit('generated:finish', this.generatedImages);
       console.log(this.generatedImages);
     },
+    async copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        this.makeToast('success', 'Texte copié', text);
+      } catch (err) {
+        console.error('Failed to copy: ', err);
+        this.makeToast('danger', 'Error', err);
+      }
+    },
+    makeToast(variant = null, title, msg) {
+      this.$bvToast.toast(msg, {
+        title,
+        variant: variant,
+        solid: true,
+      });
+    },
   },
 };
 </script>
@@ -76,5 +156,14 @@ img.generated {
   border-radius: 8px;
   height: 240px;
   display: block;
+}
+
+.prompt-display {
+  margin-top: 1rem;
+}
+
+.prompt-item {
+  display: inline-block; /* Afficher les éléments côte à côte */
+  margin: 5px;
 }
 </style>
