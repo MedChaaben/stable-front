@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="d-flex flex-column justify-content-center">
     <b-form-select
       v-model="actionChoice"
       :options="actions"
@@ -122,7 +122,7 @@ export default {
   },
   methods: {
     checkIsValid() {
-      this.isValid = this.actionChoice && this.roomChoice;
+      this.isValid = Boolean(this.actionChoice) && Boolean(this.roomChoice);
       if (this.isValid) {
         this.negativePrompt = NEGATIVE.join(', ');
         this.positivePrompt = [
@@ -140,3 +140,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+select {
+  max-width: 200px;
+}
+</style>

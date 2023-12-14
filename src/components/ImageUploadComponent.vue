@@ -2,8 +2,9 @@
   <b-container fluid>
     <!-- Upload Image Area -->
     <b-row>
-      <b-col cols="12" md="4">
-        <b-card title="Upload image area">
+      <b-col cols="3" md="3" sm="5">
+        <div class="box border border-light">
+          <h3>Upload image area</h3>
           <b-form-file
             v-model="file"
             @change="onFileChanged"
@@ -15,10 +16,11 @@
           <div v-if="imageUrl" class="mt-3">
             <b-img :src="imageUrl" alt="Image preview" fluid />
           </div>
-        </b-card>
+        </div>
 
         <!-- Select Action Area -->
-        <b-card v-if="file" title="Select Action Area" class="my-3">
+        <div v-if="file" class="box border border-light my-3">
+          <h3>Select Action Area</h3>
           <!-- Your action area content here -->
           <SelectActionComponent v-model="actionsValid"></SelectActionComponent>
           <div>
@@ -31,17 +33,19 @@
               Generate
             </b-button>
           </div>
-        </b-card>
+        </div>
       </b-col>
 
       <!-- Image Rendering Area -->
-      <b-col cols="12" md="8" class="rendring">
-        <b-card
+      <b-col cols="9" md="9" sm="7" class="rendring">
+        <div
           v-if="loaders.length || generated.length"
-          title="Image Rendering Area"
+          class="box border border-light d-flex flex-column"
         >
+          <h3>Image Rendering Area</h3>
           <RenderingComponent
             v-for="(loader, index) of loaders"
+            :class="`order-${generated.length - index}`"
             :key="index"
             :loading="loader"
             :show-images="generated[index]"
@@ -49,7 +53,7 @@
               index + 1
             }: Automatic description of the room & style`"
           />
-        </b-card>
+        </div>
       </b-col>
     </b-row>
   </b-container>
@@ -89,7 +93,6 @@ export default {
 
       reader.onload = async (e) => {
         this.imageUrl = e.target.result;
-        await this.generate();
       };
 
       reader.readAsDataURL(file);
@@ -117,5 +120,10 @@ img.generated {
   border-radius: 8px;
   height: 240px;
   display: block;
+}
+
+.box {
+  border-radius: 8px;
+  padding: 1em;
 }
 </style>
