@@ -24,55 +24,6 @@
 </template>
 
 <script>
-const POSITIVE = [
-  'interior design',
-  'detailed (white background )',
-  'atmospheric',
-  'canon eos c 3 0 0',
-  'ƒ 1. 8',
-  '3 5 mm',
-  '8 k',
-];
-
-const NEGATIVE = [
-  '(((stock photo)))',
-  '((((ugly))))',
-  '(((duplicate)))',
-  '((morbid))',
-  '((mutilated))',
-  '[out of frame]',
-  'extra fingers',
-  'mutated hands',
-  '((poorly drawn hands))',
-  '((poorly drawn face))',
-  '(((mutation)))',
-  '(((deformed)))',
-  '((ugly))',
-  'blurry',
-  '((bad anatomy))',
-  '(((bad proportions)))',
-  '((extra limbs))',
-  'cloned face',
-  '(((disfigured)))',
-  'out of frame',
-  'ugly',
-  'extra limbs',
-  '(bad anatomy)',
-  'gross proportions',
-  '(malformed limbs)',
-  '((missing arms))',
-  '((missing legs))',
-  '(((extra arms)))',
-  '(((extra legs)))',
-  'mutated hands',
-  '(fused fingers)',
-  '(too many fingers)',
-  '(((long neck)))',
-  'grayscale',
-  'black and white',
-  '(((bad composition)))',
-  '((((stock photo))))',
-];
 export default {
   name: 'SelectActionComponent',
   props: {
@@ -101,9 +52,9 @@ export default {
       ],
       rooms: [
         { value: null, text: 'Choisir une action' },
-        { value: 'living_room', text: 'Salon' },
+        { value: 'living room', text: 'Salon' },
         { value: 'bedroom', text: 'Chambre' },
-        // ... other room options ...
+        { value: 'kitchen', text: 'Cuisine' },
       ],
       styles: [
         { value: null, text: 'Choisir une action' },
@@ -113,29 +64,19 @@ export default {
         { value: 'rococo', text: 'Rococo' },
         { value: 'baroque', text: 'Baroque' },
         { value: 'industrial', text: 'Industrial' },
-        { value: 'art_deco', text: 'Art déco' },
+        { value: 'art deco', text: 'Art déco' },
         // ... other room options ... rococo style 5) baroque 6) industrial style 7) art deco
       ],
-      positivePrompt: null,
-      negativePrompt: null,
     };
   },
   methods: {
     checkIsValid() {
       this.isValid = Boolean(this.actionChoice) && Boolean(this.roomChoice);
-      if (this.isValid) {
-        this.negativePrompt = NEGATIVE.join(', ');
-        this.positivePrompt = [
-          this.actionChoice,
-          this.roomChoice,
-          this.styleChoice,
-          ...POSITIVE,
-        ]
-          .filter((el) => el) // remove null values
-          .join(', ');
-        console.log('positivePrompt', this.positivePrompt);
-        console.log('negativePrompt', this.negativePrompt);
-      }
+      this.$emit('selectActionComponent::choices', {
+        actionChoice: this.actionChoice,
+        roomChoice: this.roomChoice,
+        styleChoice: this.styleChoice,
+      });
     },
   },
 };

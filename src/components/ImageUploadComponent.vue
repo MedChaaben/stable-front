@@ -28,7 +28,10 @@
       <!-- Select Action Area -->
       <div v-if="file" class="box border border-light my-3">
         <!-- Your action area content here -->
-        <SelectActionComponent v-model="actionsValid"></SelectActionComponent>
+        <SelectActionComponent
+          v-model="actionsValid"
+          @selectActionComponent::choices="setDescription($event)"
+        />
 
         <b-button
           v-if="imageUrl"
@@ -54,9 +57,7 @@
           :key="index"
           :loading="loader"
           :show-images="generated[index]"
-          :label="`Rendering ${
-            index + 1
-          }: Automatic description of the room & style`"
+          :label="getLabelRenderingComponent(index)"
         />
       </div>
     </div>
@@ -65,6 +66,56 @@
 </template>
 
 <script>
+const POSITIVE = [
+  'interior design',
+  'detailed (white background )',
+  'atmospheric',
+  'canon eos c 3 0 0',
+  'ƒ 1. 8',
+  '3 5 mm',
+  '8 k',
+];
+
+const NEGATIVE = [
+  '(((stock photo)))',
+  '((((ugly))))',
+  '(((duplicate)))',
+  '((morbid))',
+  '((mutilated))',
+  '[out of frame]',
+  'extra fingers',
+  'mutated hands',
+  '((poorly drawn hands))',
+  '((poorly drawn face))',
+  '(((mutation)))',
+  '(((deformed)))',
+  '((ugly))',
+  'blurry',
+  '((bad anatomy))',
+  '(((bad proportions)))',
+  '((extra limbs))',
+  'cloned face',
+  '(((disfigured)))',
+  'out of frame',
+  'ugly',
+  'extra limbs',
+  '(bad anatomy)',
+  'gross proportions',
+  '(malformed limbs)',
+  '((missing arms))',
+  '((missing legs))',
+  '(((extra arms)))',
+  '(((extra legs)))',
+  'mutated hands',
+  '(fused fingers)',
+  '(too many fingers)',
+  '(((long neck)))',
+  'grayscale',
+  'black and white',
+  '(((bad composition)))',
+  '((((stock photo))))',
+];
+
 import RenderingComponent from './RenderingComponent.vue';
 import SelectActionComponent from './SelectActionComponent.vue';
 export default {
@@ -79,6 +130,8 @@ export default {
       imageUrl: null,
       generated: [],
       loaders: [],
+      descriptions: [],
+      description: null,
       actionsValid: false,
       isSidebarOpen: true,
     };
@@ -112,8 +165,30 @@ export default {
     async generate() {
       this.loaders.push(true);
       await new Promise((resolve) => setTimeout(resolve, 2000));
+
       this.loaders = this.loaders.map(() => false);
+
       this.generated.push(true);
+      this.descriptions.push(this.description);
+
+      const negativePrompt = NEGATIVE.join(', ');
+      const positivePrompt = [this.description, ...POSITIVE].join(', ');
+
+      console.log('positivePrompt', positivePrompt);
+      console.log('negativePrompt', negativePrompt);
+    },
+    setDescription(value) {
+      this.description = `${value?.actionChoice}, ${value?.roomChoice}`;
+      if (value.styleChoice) {
+        this.description += `, ${value?.styleChoice}`;
+      }
+    },
+    getLabelRenderingComponent(index) {
+      if (this.descriptions[index]) {
+        return `Rendering ${index + 1}: ${this.descriptions[index]}`;
+      }
+      // else return empty label
+      return '';
     },
   },
 };
