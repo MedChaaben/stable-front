@@ -8,6 +8,23 @@
       </div>
     </div>
     <template v-else-if="showImages">
+      <b-row>
+        <!-- Placeholder for generated images -->
+        <b-col
+          md="6"
+          lg="3"
+          v-for="(image, index) in generatedImages"
+          :key="index"
+        >
+          <b-img
+            :src="image.url"
+            alt="Generated Image"
+            fluid
+            class="generated mb-3"
+          ></b-img>
+        </b-col>
+      </b-row>
+
       <div class="d-flex align-items-center mb-2">
         <b-form-checkbox class="mr-auto" v-model="showPrompt" switch>
           Show prompt options
@@ -82,22 +99,6 @@
           </li>
         </ul>
       </div>
-      <b-row>
-        <!-- Placeholder for generated images -->
-        <b-col
-          md="6"
-          lg="3"
-          v-for="(image, index) in generatedImages"
-          :key="index"
-        >
-          <b-img
-            :src="image.url"
-            alt="Generated Image"
-            fluid
-            class="generated mb-3"
-          ></b-img>
-        </b-col>
-      </b-row>
     </template>
   </b-form-group>
 </template>
