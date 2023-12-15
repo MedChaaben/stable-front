@@ -84,6 +84,7 @@ export default {
 
 <style scoped>
 select {
-  max-width: 200px;
+  max-width: 250px;
+  margin: auto;
 }
 </style>

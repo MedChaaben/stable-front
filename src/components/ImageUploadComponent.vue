@@ -8,7 +8,7 @@
       v-model="isSidebarOpen"
     >
       <template #footer v-if="imageUrl">
-        <div class="d-flex bg-light text-dark align-items-center px-3 py-2">
+        <div class="d-flex justify-content-center bg-light text-dark px-3 py-2">
           <b-button class="m-1" @click="reset()" size="sm"
             >Annuler tout</b-button
           >
@@ -42,7 +42,7 @@
       <!-- Select Action Area -->
       <SelectActionComponent
         v-if="file"
-        class="my-3 p-4"
+        class="px-4 mt-4"
         v-model="actionsValid"
         @selectActionComponent::choices="setDescription($event)"
       />
