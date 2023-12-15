@@ -3,7 +3,7 @@ export default class ImageGeneratorService {
   static maxRange;
   constructor(baseUrl, maxRange) {
     this.baseUrl = baseUrl; // L'URL de base de votre modèle / serveur
-    this.maxRange = maxRange || 1000;
+    this.maxRange = maxRange || 800;
   }
 
   getRandomInt = (max) => Math.floor(Math.random() * max) + 1;

@@ -14,17 +14,25 @@
         class="mb-2"
         @click="showPrompt = !showPrompt"
       >
-        Show/hide prompt
+        {{ showPrompt ? 'Hide' : 'Show' }} prompt
       </b-button>
 
       <b-button-group v-if="showPrompt" class="float-right">
-        <b-button @click="showRawPrompt = !showRawPrompt" size="sm"
-          >RAW</b-button
-        >
-        <b-button @click="copyText(prompt.positive.join(', '))" size="sm"
+        <b-button @click="showRawPrompt = !showRawPrompt" size="sm">
+          {{ showRawPrompt ? 'Pills' : 'RAW' }}
+        </b-button>
+        <b-button
+          @click="
+            copyText(prompt.positive.join(', '), 'Positive prompt copié 🚀')
+          "
+          size="sm"
           >Copy positive</b-button
         >
-        <b-button @click="copyText(prompt.negative.join(', '))" size="sm"
+        <b-button
+          @click="
+            copyText(prompt.negative.join(', '), 'Negative prompt copié 🚀')
+          "
+          size="sm"
           >Copy négative</b-button
         >
       </b-button-group>
@@ -129,10 +137,10 @@ export default {
       this.$emit('generated:finish', this.generatedImages);
       console.log(this.generatedImages);
     },
-    async copyText(text) {
+    async copyText(text, title = null) {
       try {
         await navigator.clipboard.writeText(text);
-        this.makeToast('success', 'Texte copié', text);
+        this.makeToast('success', title ?? 'Texte copié', text);
       } catch (err) {
         console.error('Failed to copy: ', err);
         this.makeToast('danger', 'Error', err);
