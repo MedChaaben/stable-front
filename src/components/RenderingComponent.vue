@@ -1,6 +1,6 @@
 <template>
   <!-- Placeholder for Rendring 1 images -->
-  <b-form-group :label="label" class="mt-3">
+  <b-form-group :label="label" label-size="lg" class="mt-3">
     <div v-if="loading">
       <div class="text-center">
         <b-spinner />
@@ -184,7 +184,6 @@ export default {
 </script>
 
 <style scoped>
-/* Add styles for your image preview if necessary */
 img.generated {
   border: solid 1px;
   border-radius: 8px;

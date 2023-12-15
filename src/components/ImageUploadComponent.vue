@@ -53,7 +53,6 @@
         v-if="loaders.length || generated.length"
         class="box d-flex flex-column"
       >
-        <h3>Image Rendering Area</h3>
         <RenderingComponent
           v-for="(loader, index) of loaders"
           :class="`order-${generated.length - index} border-bottom`"
