@@ -8,72 +8,80 @@
       </div>
     </div>
     <template v-else-if="showImages">
-      <b-button
-        variant="primary"
-        size="sm"
-        class="mb-2"
-        @click="showPrompt = !showPrompt"
-      >
-        {{ showPrompt ? 'Hide' : 'Show' }} prompt
-      </b-button>
+      <div class="d-flex align-items-center mb-2">
+        <b-form-checkbox class="mr-auto" v-model="showPrompt" switch>
+          Show prompt options
+        </b-form-checkbox>
 
-      <b-button-group v-if="showPrompt" class="float-right">
-        <b-button @click="showRawPrompt = !showRawPrompt" size="sm">
-          {{ showRawPrompt ? 'Pills' : 'RAW' }}
-        </b-button>
-        <b-button
-          @click="
-            copyText(prompt.positive.join(', '), 'Positive prompt copié 🚀')
-          "
-          size="sm"
-          >Copy positive</b-button
-        >
-        <b-button
-          @click="
-            copyText(prompt.negative.join(', '), 'Negative prompt copié 🚀')
-          "
-          size="sm"
-          >Copy négative</b-button
-        >
-      </b-button-group>
-
-      <b-card
-        class="mt-2"
-        v-show="showPrompt"
-        bg-variant="dark"
-        text-variant="white"
-      >
-        <div class="prompt-display">
-          <h5>Positive Prompts</h5>
-
-          <div v-if="showRawPrompt">
-            {{ prompt?.positive.join(', ') }}
-          </div>
-          <ul v-else>
-            <li
-              v-for="(item, index) in prompt?.positive"
-              :key="index"
-              class="prompt-item"
+        <div v-if="showPrompt" class="d-flex align-items-center">
+          <b-form-radio-group v-model="showRawPrompt">
+            <b-form-radio :value="false">Pills</b-form-radio>
+            <b-form-radio :value="true">RAW</b-form-radio>
+          </b-form-radio-group>
+          <b-button-group>
+            <b-button
+              @click="
+                copyText(prompt.positive.join(', '), 'Positive prompt copié 🚀')
+              "
+              size="sm"
+              >Copy positive</b-button
             >
-              <b-badge pill variant="success">{{ item }}</b-badge>
-            </li>
-          </ul>
-
-          <h5>Negative Prompts</h5>
-          <div v-if="showRawPrompt">
-            {{ prompt?.negative.join(', ') }}
-          </div>
-          <ul v-else>
-            <li
-              v-for="(item, index) in prompt?.negative"
-              :key="index + 'n'"
-              class="prompt-item"
+            <b-button
+              @click="
+                copyText(prompt.negative.join(', '), 'Negative prompt copié 🚀')
+              "
+              size="sm"
+              >Copy négative</b-button
             >
-              <b-badge pill variant="danger">{{ item }}</b-badge>
-            </li>
-          </ul>
+          </b-button-group>
         </div>
-      </b-card>
+      </div>
+
+      <div v-show="showPrompt">
+        <b-form-group
+          v-if="showRawPrompt"
+          label="Positive"
+          :label-for="`positive-prompt-${index}`"
+        >
+          <b-form-textarea
+            :id="`positive-prompt-${index}`"
+            :value="prompt?.positive.join(', ')"
+            disabled
+          ></b-form-textarea>
+        </b-form-group>
+
+        <ul v-else>
+          <li
+            v-for="(item, index) in prompt?.positive"
+            :key="index"
+            class="prompt-item"
+          >
+            <b-badge pill variant="success">{{ item }}</b-badge>
+          </li>
+        </ul>
+
+        <b-form-group
+          v-if="showRawPrompt"
+          label="Negative"
+          :label-for="`negative-prompt-${index}`"
+        >
+          <b-form-textarea
+            :id="`negative-prompt-${index}`"
+            :value="prompt?.negative.join(', ')"
+            disabled
+          ></b-form-textarea>
+        </b-form-group>
+
+        <ul v-else>
+          <li
+            v-for="(item, index) in prompt?.negative"
+            :key="index + 'n'"
+            class="prompt-item"
+          >
+            <b-badge pill variant="danger">{{ item }}</b-badge>
+          </li>
+        </ul>
+      </div>
       <b-row>
         <!-- Placeholder for generated images -->
         <b-col
@@ -112,6 +120,12 @@ export default {
     prompt: {
       type: Object,
     },
+    advanced: {
+      type: Boolean,
+    },
+    index: {
+      type: Number,
+    },
   },
   data() {
     return {
@@ -122,6 +136,17 @@ export default {
       showPrompt: false,
       showRawPrompt: false,
     };
+  },
+  watch: {
+    advanced(value) {
+      if (value) {
+        this.showPrompt = true;
+        this.showRawPrompt = false;
+      } else {
+        this.showPrompt = false;
+        this.showRawPrompt = false;
+      }
+    },
   },
   async mounted() {
     await this.get4RandomImages();
@@ -164,10 +189,6 @@ img.generated {
   border-radius: 8px;
   height: 240px;
   display: block;
-}
-
-.prompt-display {
-  margin-top: 1rem;
 }
 
 .prompt-item {

@@ -9,10 +9,13 @@
     >
       <template #footer v-if="imageUrl">
         <div class="d-flex bg-light text-dark align-items-center px-3 py-2">
-          <b-button class="m-1" @click="reset()">Annuler tout</b-button>
+          <b-button class="m-1" @click="reset()" size="sm"
+            >Annuler tout</b-button
+          >
 
           <b-button
             class="m-1"
+            size="sm"
             @click="generate()"
             :disabled="disableBtnGenerate"
           >
@@ -60,6 +63,7 @@
           :label="getLabelRenderingComponent(index)"
           :prompt="prompts[index]"
           :index="index"
+          :advanced="advanced"
         />
       </div>
     </div>
@@ -137,6 +141,7 @@ export default {
       prompts: [],
       actionsValid: false,
       isSidebarOpen: true,
+      advanced: false,
     };
   },
   computed: {
