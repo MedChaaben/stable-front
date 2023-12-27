@@ -1,5 +1,6 @@
 <template>
   <div>
+    <vue-topprogress ref="topProgress" color="red" />
     <b-button v-b-toggle.sidebar class="sidebar-toggle">Sidebar</b-button>
     <b-sidebar
       id="sidebar"
@@ -47,7 +48,6 @@
         @selectActionComponent::choices="setDescription($event)"
       />
     </b-sidebar>
-    <vue-topprogress ref="topProgress" color="red"></vue-topprogress>
     <div :class="{ 'content-collapsed': isSidebarOpen }" class="main-content">
       <div
         v-if="loaders.length || generated.length"
@@ -139,6 +139,7 @@ export default {
   data() {
     return {
       file: null,
+      image: null,
       imageUrl: null,
       generated: [],
       loaders: [],
@@ -168,6 +169,8 @@ export default {
 
       reader.onload = async (e) => {
         this.imageUrl = e.target.result;
+        this.image = new Image();
+        this.image.src = this.imageUrl;
       };
 
       reader.readAsDataURL(file);
@@ -205,11 +208,16 @@ export default {
         this.$refs.topProgress.set(progress * 100);
       }, 1500);
 
+      const { width, height } = this.image;
+      const ratio = width / height;
+
       const { images } = await this.stableDiffusionService.txt2img({
         steps: 20,
         batch_size: 4,
         n_iter: 1,
         cfg_scale: 7,
+        width: 512,
+        height: 512 / ratio,
         prompt: [...this.description.split(', '), ...POSITIVE].join(','),
         negative_prompt: NEGATIVE.join(','),
       });
