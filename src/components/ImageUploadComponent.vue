@@ -47,24 +47,25 @@
         @selectActionComponent::choices="setDescription($event)"
       />
     </b-sidebar>
-
+    <vue-topprogress ref="topProgress" color="red"></vue-topprogress>
     <div :class="{ 'content-collapsed': isSidebarOpen }" class="main-content">
       <div
         v-if="loaders.length || generated.length"
         class="box d-flex flex-column"
       >
-        <RenderingComponent
-          v-for="(loader, index) of loaders"
-          :class="`order-${generated.length - index} border-bottom`"
-          :key="index"
-          :loading="loader"
-          :images="generated[index]"
-          :show-images="Boolean(generated[index])"
-          :label="getLabelRenderingComponent(index)"
-          :prompt="prompts[index]"
-          :index="index"
-          :advanced="advanced"
-        />
+        <template v-for="(loader, index) in loaders">
+          <RenderingComponent
+            :class="`order-${generated.length - index} border-bottom`"
+            :key="index"
+            :loading="loader"
+            :current-image="currentImages[index]"
+            :images="generated[index]"
+            :show-images="Boolean(generated[index])"
+            :label="getLabelRenderingComponent(index)"
+            :prompt="prompts[index]"
+            :index="index"
+          />
+        </template>
       </div>
     </div>
     <!-- Upload Image Area -->
@@ -122,6 +123,7 @@ const NEGATIVE = [
   '((((stock photo))))',
 ];
 
+import { vueTopprogress } from 'vue-top-progress';
 import RenderingComponent from './RenderingComponent.vue';
 import SelectActionComponent from './SelectActionComponent.vue';
 import StableDiffusionService from '@/services/StableDiffusionService';
@@ -131,6 +133,7 @@ export default {
   components: {
     RenderingComponent,
     SelectActionComponent,
+    vueTopprogress,
   },
   data() {
     return {
@@ -138,12 +141,12 @@ export default {
       imageUrl: null,
       generated: [],
       loaders: [],
+      currentImages: [],
       descriptions: [],
       description: null,
       prompts: [],
       actionsValid: false,
       isSidebarOpen: true,
-      advanced: false,
       stableDiffusionService: new StableDiffusionService(),
     };
   },
@@ -187,18 +190,31 @@ export default {
         positive: [...this.description.split(', '), ...POSITIVE],
       });
 
-      console.log(this.prompts);
+      this.$refs.topProgress.start();
+      this.$refs.topProgress.pause();
+      this.currentImages.push(null);
+
+      const interval = setInterval(async () => {
+        const { progress, current_image } =
+          await this.stableDiffusionService.progress();
+        this.currentImages.pop();
+        this.currentImages.push(current_image);
+        this.$refs.topProgress.set(progress * 100);
+      }, 1500);
 
       const { images } = await this.stableDiffusionService.txt2img({
         steps: 20,
         batch_size: 4,
-        cfg_scale: 8.5,
+        n_iter: 1,
+        cfg_scale: 7,
         prompt: [...this.description.split(', '), ...POSITIVE].join(','),
         negative_prompt: NEGATIVE.join(','),
       });
 
+      // end generate
       this.generated.push(images);
-
+      this.$refs.topProgress.done();
+      clearInterval(interval);
       this.loaders = this.loaders.map(() => false);
     },
     setDescription(value) {

@@ -11,4 +11,13 @@ export default class StableDiffusionService {
       console.log('Error in StableDiffusionService txt2img');
     }
   }
+
+  async progress() {
+    try {
+      const { data } = await axiosClient.get('/sdapi/v1/progress');
+      return data;
+    } catch (error) {
+      console.log('Error in StableDiffusionService progress');
+    }
+  }
 }

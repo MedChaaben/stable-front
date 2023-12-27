@@ -5,6 +5,13 @@
       <div class="text-center">
         <b-spinner />
         <p>Loading images...</p>
+        <b-img
+          v-if="currentImage"
+          :src="`data:image/png;base64,${currentImage}`"
+          alt="Generated Image"
+          fluid
+          class="generated mb-3"
+        ></b-img>
       </div>
     </div>
     <template v-else-if="showImages">
@@ -132,6 +139,9 @@ export default {
     },
     images: {
       type: Array,
+    },
+    currentImage: {
+      type: String,
     },
     prompt: {
       type: Object,
