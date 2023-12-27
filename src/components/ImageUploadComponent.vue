@@ -211,7 +211,7 @@ export default {
       const { width, height } = this.image;
       const ratio = width / height;
 
-      const { images } = await this.stableDiffusionService.txt2img({
+      const { images } = await this.stableDiffusionService.img2img({
         steps: 20,
         batch_size: 4,
         n_iter: 1,
@@ -220,6 +220,9 @@ export default {
         height: 512 / ratio,
         prompt: [...this.description.split(', '), ...POSITIVE].join(','),
         negative_prompt: NEGATIVE.join(','),
+        init_images: this.generated.length
+          ? this.generated.slice(-1).flat()
+          : [this.image.src],
       });
 
       // end generate

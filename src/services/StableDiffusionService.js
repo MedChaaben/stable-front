@@ -12,6 +12,15 @@ export default class StableDiffusionService {
     }
   }
 
+  async img2img(payload) {
+    try {
+      const { data } = await axiosClient.post('/sdapi/v1/img2img', payload);
+      return data;
+    } catch (error) {
+      console.log('Error in StableDiffusionService img2img');
+    }
+  }
+
   async progress() {
     try {
       const { data } = await axiosClient.get('/sdapi/v1/progress');
