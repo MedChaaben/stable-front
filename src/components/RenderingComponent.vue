@@ -10,14 +10,9 @@
     <template v-else-if="showImages">
       <b-row>
         <!-- Placeholder for generated images -->
-        <b-col
-          md="6"
-          lg="3"
-          v-for="(image, index) in generatedImages"
-          :key="index"
-        >
+        <b-col md="6" lg="3" v-for="(image, index) in images" :key="index">
           <b-img
-            :src="image.url"
+            :src="`data:image/png;base64,${image}`"
             alt="Generated Image"
             fluid
             class="generated mb-3"
@@ -104,8 +99,6 @@
 </template>
 
 <script>
-import ImageGeneratorService from '@/services/ImageGeneratorService';
-
 export default {
   name: 'RenderingComponent',
   props: {
@@ -118,11 +111,11 @@ export default {
     showImages: {
       type: Boolean,
     },
+    images: {
+      type: Array,
+    },
     prompt: {
       type: Object,
-    },
-    advanced: {
-      type: Boolean,
     },
     index: {
       type: Number,
@@ -130,39 +123,11 @@ export default {
   },
   data() {
     return {
-      imageGeneratorService: new ImageGeneratorService(
-        'https://picsum.photos/512/512/?image='
-      ),
-      generatedImages: [],
       showPrompt: false,
       showRawPrompt: false,
     };
   },
-  watch: {
-    advanced(value) {
-      if (value) {
-        this.showPrompt = true;
-        this.showRawPrompt = false;
-      } else {
-        this.showPrompt = false;
-        this.showRawPrompt = false;
-      }
-    },
-  },
-  async mounted() {
-    await this.get4RandomImages();
-  },
   methods: {
-    async get4RandomImages() {
-      const promises = Array.from({ length: 4 }, () =>
-        this.imageGeneratorService.generateImage()
-      );
-      this.generatedImages = (await Promise.all(promises)).map((str) => ({
-        url: str,
-      }));
-      this.$emit('generated:finish', this.generatedImages);
-      console.log(this.generatedImages);
-    },
     async copyText(text, title = null) {
       try {
         await navigator.clipboard.writeText(text);

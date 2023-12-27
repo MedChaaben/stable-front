@@ -58,7 +58,8 @@
           :class="`order-${generated.length - index} border-bottom`"
           :key="index"
           :loading="loader"
-          :show-images="generated[index]"
+          :images="generated[index]"
+          :show-images="Boolean(generated[index])"
           :label="getLabelRenderingComponent(index)"
           :prompt="prompts[index]"
           :index="index"
@@ -123,6 +124,8 @@ const NEGATIVE = [
 
 import RenderingComponent from './RenderingComponent.vue';
 import SelectActionComponent from './SelectActionComponent.vue';
+import StableDiffusionService from '@/services/StableDiffusionService';
+
 export default {
   name: 'ImageUploadComponent',
   components: {
@@ -141,6 +144,7 @@ export default {
       actionsValid: false,
       isSidebarOpen: true,
       advanced: false,
+      stableDiffusionService: new StableDiffusionService(),
     };
   },
   computed: {
@@ -176,11 +180,6 @@ export default {
     async generate() {
       this.loaders.push(true);
       this.scrollToTop();
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      this.loaders = this.loaders.map(() => false);
-
-      this.generated.push(true);
       this.descriptions.push(this.description);
 
       this.prompts.push({
@@ -189,6 +188,18 @@ export default {
       });
 
       console.log(this.prompts);
+
+      const { images } = await this.stableDiffusionService.txt2img({
+        steps: 20,
+        batch_size: 4,
+        cfg_scale: 8.5,
+        prompt: [...this.description.split(', '), ...POSITIVE].join(','),
+        negative_prompt: NEGATIVE.join(','),
+      });
+
+      this.generated.push(images);
+
+      this.loaders = this.loaders.map(() => false);
     },
     setDescription(value) {
       this.description = `${value?.actionChoice}, ${value?.roomChoice}`;
