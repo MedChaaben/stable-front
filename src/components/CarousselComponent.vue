@@ -9,49 +9,29 @@
       label-next=""
       label-prev=""
       background="#ababab"
-      img-width="1024"
-      img-height="480"
+      img-width="512"
+      img-height="512"
       @sliding-start="onSlideStart"
       @sliding-end="onSlideEnd"
     >
-      <!-- Text slides with image -->
-      <b-carousel-slide
-        caption="First slide"
-        text="Nulla vitae elit libero, a pharetra augue mollis interdum."
-        img-src="https://picsum.photos/1024/480/?image=52"
-      ></b-carousel-slide>
-
-      <!-- Slides with custom text -->
-      <b-carousel-slide img-src="https://picsum.photos/1024/480/?image=54">
-        <h1>Hello world!</h1>
-      </b-carousel-slide>
-
       <!-- Slides with image only -->
-      <b-carousel-slide
-        img-src="https://picsum.photos/1024/480/?image=58"
-      ></b-carousel-slide>
-
-      <!-- Slides with img slot -->
-      <!-- Note the classes .d-block and .img-fluid to prevent browser default image alignment -->
-      <b-carousel-slide>
+      <b-carousel-slide v-for="(image, index) in images" :key="index">
         <template #img>
           <img
-            class="d-block img-fluid w-100"
-            width="1024"
-            height="480"
-            src="https://picsum.photos/1024/480/?image=55"
-            alt="image slot"
+            :src="`data:image/png;base64,${image}`"
+            class="d-block w-100"
+            alt="Slide"
           />
         </template>
-      </b-carousel-slide>
 
-      <!-- Slide with blank fluid image to maintain slide aspect ratio -->
-      <b-carousel-slide caption="Blank Image" img-blank img-alt="Blank image">
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-          eros felis, tincidunt a tincidunt eget, convallis vel est. Ut
-          pellentesque ut lacus vel interdum.
-        </p>
+        <!-- Bouton de téléchargement -->
+        <a
+          :href="`data:image/png;base64,${image}`"
+          :download="`image-${index}.png`"
+          class="download-button"
+        >
+          Télécharger
+        </a>
       </b-carousel-slide>
     </b-carousel>
   </div>
@@ -60,6 +40,11 @@
 <script>
 export default {
   name: 'CarouselComponent',
+  props: {
+    images: {
+      type: Array,
+    },
+  },
   data() {
     return {
       slide: 0,

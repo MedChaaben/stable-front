@@ -16,6 +16,7 @@
             alt="Generated Image"
             fluid
             class="generated mb-3"
+            @click="openModal(index)"
           ></b-img>
         </b-col>
       </b-row>
@@ -95,12 +96,30 @@
         </ul>
       </div>
     </template>
+
+    <!-- Modal pour afficher l'image en taille réelle -->
+    <b-modal
+      v-model="showModal"
+      :title="label"
+      hide-footer
+      header-bg-variant="dark"
+      header-text-variant="light"
+      body-bg-variant="dark"
+      size="xl"
+      centered
+      v-if="showImages"
+    >
+      <CarousselComponent :images="images"></CarousselComponent>
+    </b-modal>
   </b-form-group>
 </template>
 
 <script>
+import CarousselComponent from './CarousselComponent.vue';
+
 export default {
   name: 'RenderingComponent',
+  components: { CarousselComponent },
   props: {
     label: {
       type: String,
@@ -125,6 +144,8 @@ export default {
     return {
       showPrompt: false,
       showRawPrompt: false,
+      showModal: false,
+      currentImageIndex: 0,
     };
   },
   methods: {
@@ -143,6 +164,20 @@ export default {
         variant: variant,
         solid: true,
       });
+    },
+    openModal(index) {
+      this.currentImageIndex = index;
+      this.showModal = true;
+    },
+    nextImage() {
+      if (this.currentImageIndex < this.images.length - 1) {
+        this.currentImageIndex += 1;
+      }
+    },
+    previousImage() {
+      if (this.currentImageIndex > 0) {
+        this.currentImageIndex -= 1;
+      }
     },
   },
 };
