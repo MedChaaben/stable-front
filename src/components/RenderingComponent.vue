@@ -7,10 +7,10 @@
           v-if="currentImage"
           :src="`data:image/png;base64,${currentImage}`"
           alt="Generated Image"
-          class="generated mb-3 mx-auto"
+          class="generated mx-auto mb-3"
         ></b-img>
-        <b-spinner />
-        <p>Loading images...</p>
+        <b-spinner class="mb-1" />
+        <p>{{ (progress * 100).toFixed(0) }} %</p>
       </div>
     </div>
     <template v-else-if="showImages">
@@ -146,6 +146,9 @@ export default {
       type: Object,
     },
     index: {
+      type: Number,
+    },
+    progress: {
       type: Number,
     },
   },

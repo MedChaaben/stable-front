@@ -58,6 +58,7 @@
             :class="`order-${generated.length - index} border-bottom`"
             :key="index"
             :loading="loader"
+            :progress="progress"
             :current-image="currentImages[index]"
             :images="generated[index]"
             :show-images="Boolean(generated[index])"
@@ -148,6 +149,7 @@ export default {
       actionsValid: false,
       isSidebarOpen: true,
       stableDiffusionService: new StableDiffusionService(),
+      progress: 0,
     };
   },
   computed: {
@@ -199,6 +201,7 @@ export default {
           await this.stableDiffusionService.progress();
         this.currentImages.pop();
         this.currentImages.push(current_image);
+        this.progress = progress;
         this.$refs.topProgress.set(progress * 100);
       }, 1500);
 
@@ -216,6 +219,7 @@ export default {
       this.$refs.topProgress.done();
       clearInterval(interval);
       this.loaders = this.loaders.map(() => false);
+      this.progress = 0;
     },
     setDescription(value) {
       this.description = `${value?.actionChoice}, ${value?.roomChoice}`;
