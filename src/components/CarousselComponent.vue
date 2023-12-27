@@ -2,8 +2,7 @@
   <div>
     <b-carousel
       id="carousel-1"
-      v-model="slide"
-      :interval="4000"
+      :interval="0"
       controls
       indicators
       label-next=""
@@ -11,8 +10,6 @@
       background="#ababab"
       img-width="512"
       img-height="512"
-      @sliding-start="onSlideStart"
-      @sliding-end="onSlideEnd"
     >
       <!-- Slides with image only -->
       <b-carousel-slide v-for="(image, index) in images" :key="index">
@@ -43,22 +40,6 @@ export default {
   props: {
     images: {
       type: Array,
-    },
-  },
-  data() {
-    return {
-      slide: 0,
-      sliding: null,
-    };
-  },
-  methods: {
-    onSlideStart(slide) {
-      console.log('onSlideStart', slide);
-      this.sliding = true;
-    },
-    onSlideEnd(slide) {
-      console.log('onSlideEnd', slide);
-      this.sliding = false;
     },
   },
 };

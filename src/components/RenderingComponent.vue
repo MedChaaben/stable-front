@@ -3,15 +3,14 @@
   <b-form-group :label="label" label-size="lg" class="mt-3">
     <div v-if="loading">
       <div class="text-center">
-        <b-spinner />
-        <p>Loading images...</p>
         <b-img
           v-if="currentImage"
           :src="`data:image/png;base64,${currentImage}`"
           alt="Generated Image"
-          fluid
-          class="generated mb-3"
+          class="generated mb-3 mx-auto"
         ></b-img>
+        <b-spinner />
+        <p>Loading images...</p>
       </div>
     </div>
     <template v-else-if="showImages">
