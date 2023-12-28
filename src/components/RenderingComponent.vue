@@ -265,7 +265,7 @@ img.generated {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Fond noir semi-transparent */
+  background-color: rgba(0, 0, 0, 0.25); /* Fond noir semi-transparent */
   opacity: 0; /* Invisible initialement */
   transition: opacity 0.3s; /* Animation d'apparition */
 }
