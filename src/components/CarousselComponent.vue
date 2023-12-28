@@ -2,6 +2,7 @@
   <div>
     <b-carousel
       id="carousel-1"
+      :value="selected"
       :interval="0"
       controls
       indicators
@@ -40,6 +41,9 @@ export default {
   props: {
     images: {
       type: Array,
+    },
+    selected: {
+      type: Number,
     },
   },
 };

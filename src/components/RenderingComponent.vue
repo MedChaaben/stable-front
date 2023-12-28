@@ -115,7 +115,10 @@
       centered
       v-if="showImages"
     >
-      <CarousselComponent :images="images"></CarousselComponent>
+      <CarousselComponent
+        :images="images"
+        :selected="selected"
+      ></CarousselComponent>
     </b-modal>
   </b-form-group>
 </template>
@@ -180,6 +183,7 @@ export default {
     openModal(index) {
       this.currentImageIndex = index;
       this.showModal = true;
+      this.selected = index;
     },
     nextImage() {
       if (this.currentImageIndex < this.images.length - 1) {
