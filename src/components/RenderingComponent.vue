@@ -42,6 +42,7 @@
               ></b-icon>
               <!-- <b-icon class="action-icon" icon="pencil-square"></b-icon> -->
               <b-icon
+                v-if="images.length > 1"
                 class="action-icon"
                 icon="trash"
                 @click="deleteItem(index)"

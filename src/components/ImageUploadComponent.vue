@@ -223,10 +223,9 @@ export default {
         height: 512 / ratio,
         prompt: [...this.description.split(', '), ...POSITIVE].join(','),
         negative_prompt: NEGATIVE.join(','),
-        init_images:
-          this.generated.length && this.generated.slice(-1).flat().length
-            ? this.generated.slice(-1).flat()
-            : [this.image.src],
+        init_images: this.generated.length
+          ? this.generated.slice(-1).flat()
+          : [this.image.src],
       });
 
       // end generate
