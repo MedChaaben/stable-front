@@ -21,15 +21,6 @@
             alt="Slide"
           />
         </template>
-
-        <!-- Bouton de téléchargement -->
-        <a
-          :href="`data:image/png;base64,${image}`"
-          :download="`image-${index}.png`"
-          class="download-button"
-        >
-          Télécharger
-        </a>
       </b-carousel-slide>
     </b-carousel>
   </div>

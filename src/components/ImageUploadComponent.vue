@@ -65,6 +65,7 @@
             :label="getLabelRenderingComponent(index)"
             :prompt="prompts[index]"
             :index="index"
+            @delete-image="handleDeleteImage(index, $event)"
           />
         </template>
       </div>
@@ -222,9 +223,10 @@ export default {
         height: 512 / ratio,
         prompt: [...this.description.split(', '), ...POSITIVE].join(','),
         negative_prompt: NEGATIVE.join(','),
-        init_images: this.generated.length
-          ? this.generated.slice(-1).flat()
-          : [this.image.src],
+        init_images:
+          this.generated.length && this.generated.slice(-1).flat().length
+            ? this.generated.slice(-1).flat()
+            : [this.image.src],
       });
 
       // end generate
@@ -256,6 +258,9 @@ export default {
         left: 0, // Gauche de la page
         behavior: 'smooth', // Défilement fluide
       });
+    },
+    handleDeleteImage(index, event) {
+      this.generated[index].splice(event, 1);
     },
   },
 };

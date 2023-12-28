@@ -7,7 +7,6 @@
           v-if="currentImage"
           :src="`data:image/png;base64,${currentImage}`"
           alt="Generated Image"
-          thumbnail
           class="generated mx-auto mb-3"
         ></b-img>
         <b-spinner class="mb-1" />
@@ -18,17 +17,41 @@
       <b-row>
         <!-- Placeholder for generated images -->
         <b-col md="6" lg="3" v-for="(image, index) in images" :key="index">
-          <b-img
-            :src="`data:image/png;base64,${image}`"
-            alt="Generated Image"
-            fluid
-            class="generated mb-3"
-            @click="openModal(index)"
-          ></b-img>
+          <div
+            class="envelop"
+            @mouseover="hover = true"
+            @mouseleave="hover = false"
+          >
+            <b-img
+              :src="`data:image/png;base64,${image}`"
+              alt="Generated Image"
+              fluid
+              class="generated"
+            ></b-img>
+            <div class="overlay" v-show="hover"></div>
+            <div class="actions" v-show="hover">
+              <b-icon
+                class="action-icon"
+                icon="eye"
+                @click="openModal(index)"
+              ></b-icon>
+              <b-icon
+                class="action-icon"
+                icon="download"
+                @click="downloadImage(image, index)"
+              ></b-icon>
+              <!-- <b-icon class="action-icon" icon="pencil-square"></b-icon> -->
+              <b-icon
+                class="action-icon"
+                icon="trash"
+                @click="deleteItem(index)"
+              ></b-icon>
+            </div>
+          </div>
         </b-col>
       </b-row>
 
-      <div class="d-flex align-items-center mb-2">
+      <div class="d-flex align-items-center mt-3 mb-2">
         <b-form-checkbox class="mr-auto" v-model="showPrompt" switch>
           Show prompt options
         </b-form-checkbox>
@@ -125,6 +148,7 @@
 </template>
 
 <script>
+import { downloadImage } from '@/utils';
 import CarousselComponent from './CarousselComponent.vue';
 
 export default {
@@ -161,7 +185,9 @@ export default {
       showPrompt: false,
       showRawPrompt: false,
       showModal: false,
-      currentImageIndex: 0,
+      selected: 0,
+      hover: false,
+      downloadImage: downloadImage,
     };
   },
   methods: {
@@ -182,19 +208,11 @@ export default {
       });
     },
     openModal(index) {
-      this.currentImageIndex = index;
-      this.showModal = true;
       this.selected = index;
+      this.showModal = true;
     },
-    nextImage() {
-      if (this.currentImageIndex < this.images.length - 1) {
-        this.currentImageIndex += 1;
-      }
-    },
-    previousImage() {
-      if (this.currentImageIndex > 0) {
-        this.currentImageIndex -= 1;
-      }
+    deleteItem(index) {
+      this.$emit('delete-image', index);
     },
   },
 };
@@ -209,5 +227,47 @@ img.generated {
 .prompt-item {
   display: inline-block; /* Afficher les éléments côte à côte */
   margin: 5px;
+}
+
+.envelop {
+  position: relative;
+  display: inline-block; /* ou block, selon votre layout */
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Fond noir semi-transparent */
+  opacity: 0; /* Invisible initialement */
+  transition: opacity 0.3s; /* Animation d'apparition */
+}
+
+.actions {
+  position: absolute;
+  top: 50%; /* Centrer verticalement */
+  left: 50%; /* Centrer horizontalement */
+  transform: translate(-50%, -50%); /* Ajustement pour un centrage parfait */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0; /* Rendre invisible initialement */
+  transition: opacity 0.3s; /* Animation d'apparition */
+}
+
+.envelop:hover .overlay {
+  opacity: 1; /* Visible au survol */
+}
+
+.actions:hover {
+  opacity: 1; /* Rendre visible au survol */
+}
+
+.action-icon {
+  padding: 0 0.5rem;
+  cursor: pointer;
+  font-size: 40px;
 }
 </style>
