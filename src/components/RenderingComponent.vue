@@ -7,6 +7,7 @@
           v-if="currentImage"
           :src="`data:image/png;base64,${currentImage}`"
           alt="Generated Image"
+          thumbnail
           class="generated mx-auto mb-3"
         ></b-img>
         <b-spinner class="mb-1" />
@@ -201,9 +202,7 @@ export default {
 
 <style scoped>
 img.generated {
-  border: solid 1px;
   border-radius: 8px;
-  height: 240px;
   display: block;
 }
 
