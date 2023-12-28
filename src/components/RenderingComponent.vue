@@ -45,7 +45,7 @@
                 v-if="images.length > 1"
                 class="action-icon"
                 icon="trash"
-                @click="deleteItem(index)"
+                @click="askDeleteConfirmation(index)"
               ></b-icon>
             </div>
           </div>
@@ -145,6 +145,17 @@
         :selected="selected"
       ></CarousselComponent>
     </b-modal>
+
+    <!-- Modal pour confirmer la supression d'une image -->
+    <b-modal
+      id="delete-confirmation-modal"
+      title="Confirmer la suppression"
+      size="sm"
+      @ok="confirmDeletion"
+      v-model="isDeleteConfirmationModalVisible"
+    >
+      <p>Êtes-vous sûr de vouloir supprimer cette image ?</p>
+    </b-modal>
   </b-form-group>
 </template>
 
@@ -188,6 +199,8 @@ export default {
       showModal: false,
       selected: 0,
       hover: false,
+      isDeleteConfirmationModalVisible: false,
+      indexToDelete: null, // Index de l'image à supprimer
       downloadImage: downloadImage,
     };
   },
@@ -211,6 +224,17 @@ export default {
     openModal(index) {
       this.selected = index;
       this.showModal = true;
+    },
+
+    askDeleteConfirmation(index) {
+      this.indexToDelete = index;
+      this.isDeleteConfirmationModalVisible = true;
+    },
+    confirmDeletion() {
+      if (this.indexToDelete !== null) {
+        this.deleteItem(this.indexToDelete);
+        this.indexToDelete = null; // Réinitialiser l'index après la suppression
+      }
     },
     deleteItem(index) {
       this.$emit('delete-image', index);
