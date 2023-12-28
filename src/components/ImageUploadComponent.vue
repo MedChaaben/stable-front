@@ -176,9 +176,11 @@ export default {
       reader.readAsDataURL(file);
     },
     reset() {
+      this.interrupt();
       this.generated = [];
       this.loaders = [];
       this.descriptions = [];
+      this.currentImages = [];
       this.file = null;
       this.imageUrl = null;
       this.description = null;
@@ -231,6 +233,9 @@ export default {
       clearInterval(interval);
       this.loaders = this.loaders.map(() => false);
       this.progress = 0;
+    },
+    async interrupt() {
+      await this.stableDiffusionService.interrupt();
     },
     setDescription(value) {
       this.description = `${value?.actionChoice}, ${value?.roomChoice}`;

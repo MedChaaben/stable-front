@@ -29,4 +29,13 @@ export default class StableDiffusionService {
       console.log('Error in StableDiffusionService progress');
     }
   }
+
+  async interrupt() {
+    try {
+      const { data } = await axiosClient.post('/sdapi/v1/interrupt');
+      return data;
+    } catch (error) {
+      console.log('Error in StableDiffusionService interrupt');
+    }
+  }
 }
