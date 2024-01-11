@@ -75,60 +75,11 @@
 </template>
 
 <script>
-const POSITIVE = [
-  'interior design',
-  'detailed (white background )',
-  'atmospheric',
-  'canon eos c 3 0 0',
-  'ƒ 1. 8',
-  '3 5 mm',
-  '8 k',
-];
-
-const NEGATIVE = [
-  '(((stock photo)))',
-  '((((ugly))))',
-  '(((duplicate)))',
-  '((morbid))',
-  '((mutilated))',
-  '[out of frame]',
-  'extra fingers',
-  'mutated hands',
-  '((poorly drawn hands))',
-  '((poorly drawn face))',
-  '(((mutation)))',
-  '(((deformed)))',
-  '((ugly))',
-  'blurry',
-  '((bad anatomy))',
-  '(((bad proportions)))',
-  '((extra limbs))',
-  'cloned face',
-  '(((disfigured)))',
-  'out of frame',
-  'ugly',
-  'extra limbs',
-  '(bad anatomy)',
-  'gross proportions',
-  '(malformed limbs)',
-  '((missing arms))',
-  '((missing legs))',
-  '(((extra arms)))',
-  '(((extra legs)))',
-  'mutated hands',
-  '(fused fingers)',
-  '(too many fingers)',
-  '(((long neck)))',
-  'grayscale',
-  'black and white',
-  '(((bad composition)))',
-  '((((stock photo))))',
-];
-
 import { vueTopprogress } from 'vue-top-progress';
 import RenderingComponent from './RenderingComponent.vue';
 import SelectActionComponent from './SelectActionComponent.vue';
 import StableDiffusionService from '@/services/StableDiffusionService';
+import { NEGATIVE, POSITIVE } from '@/constants';
 
 export default {
   name: 'ImageUploadComponent',
@@ -152,6 +103,7 @@ export default {
       isSidebarOpen: true,
       stableDiffusionService: new StableDiffusionService(),
       progress: 0,
+      progressInterval: null,
     };
   },
   computed: {
@@ -202,7 +154,7 @@ export default {
       this.$refs.topProgress.pause();
       this.currentImages.push(null);
 
-      const interval = setInterval(async () => {
+      this.progressInterval = setInterval(async () => {
         const { progress, current_image } =
           await this.stableDiffusionService.progress();
         this.currentImages.pop();
@@ -211,17 +163,14 @@ export default {
         this.$refs.topProgress.set(progress * 100);
       }, 1500);
 
-      const { width, height } = this.image;
-      const ratio = width / height;
-
       const { images } = await this.stableDiffusionService.img2img({
         steps: 20,
         batch_size: 4,
         n_iter: 1,
         cfg_scale: 7,
         width: 512,
-        height: 512 / ratio,
-        prompt: [...this.description.split(', '), ...POSITIVE].join(','),
+        height: 512 / (this.image.width / this.image.height),
+        prompt: [this.description, ...POSITIVE].join(','),
         negative_prompt: NEGATIVE.join(','),
         init_images: this.generated.length
           ? this.generated.slice(-1).flat()
@@ -231,7 +180,7 @@ export default {
       // end generate
       this.generated.push(images);
       this.$refs.topProgress.done();
-      clearInterval(interval);
+      clearInterval(this.progressInterval);
       this.loaders = this.loaders.map(() => false);
       this.progress = 0;
     },
