@@ -1,24 +1,20 @@
-# front
+# stable-front
 
-## Project setup
-```
+Bienvenue dans le dépôt de `stable-front`, une application Vue.js utilisant Vue Bootstrap pour une interface utilisateur réactive et élégante. Ce projet comprend une intégration avec Axios pour la gestion des requêtes HTTP et un service dédié à l'interaction avec une API de Stable Diffusion.
+
+## Technologies Utilisées
+
+- Vue.js
+- Bootstrap-Vue
+- Axios pour les requêtes HTTP
+- JavaScript ES6+
+
+## Installation
+
+Clonez le dépôt et installez les dépendances nécessaires :
+
+```bash
+git clone https://github.com/MedChaaben/stable-front.git
+cd stable-front
 npm install
-```
-
-### Compiles and hot-reloads for development
-```
 npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
